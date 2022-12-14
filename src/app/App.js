@@ -49,6 +49,27 @@ class App extends Component {
         // console.log(this.state.tasks);
       });
   }
+  handleDelete(id) {
+    if (confirm("Are you suere you want to delete it?")) {
+      console.log(`deleting: ${id}`);
+      fetch(`api/task/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          M.toast({ html: "Task Deleted" });
+          this.getTasks();
+        })
+        .catch((err) => console.error(err));
+    } else {
+      M.toast({ html: "Task Not Deleted" });
+    }
+  }
   handleChange(e) {
     // Almacenamos en una variable dos datos que estan en e.target
     const { name, value } = e.target;
@@ -115,6 +136,7 @@ class App extends Component {
                   <tr>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -124,6 +146,22 @@ class App extends Component {
                       <tr key={task._id}>
                         <td>{task.title}</td>
                         <td>{task.description}</td>
+                        {/* Agregar estilos para mejor los botones */}
+                        <td>
+                          <button
+                            // onClick={this.handleDelete}
+                            className="btn light-blue darken-4"
+                          >
+                            <i className="material-icons">edit</i>
+                          </button>
+                          <button
+                            onClick={() => this.handleDelete(task._id)}
+                            className="btn light-blue darken-4"
+                            style={{ margin: "4px" }}
+                          >
+                            <i className="material-icons">delete</i>
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
