@@ -8,31 +8,51 @@ class App extends Component {
       title: "",
       description: "",
       tasks: [],
+      // por que al incio la app no tiene id
+      _id: "",
     };
     this.addTask = this.addTask.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
   addTask(e) {
-    // Capturamos los datos atravez del estado de la aplicacion
-    // console.log(this.state);
-    // Evento fecth para enviar una peticion http al sevidor
-    fetch("/api/task", {
-      method: "POST",
-      body: JSON.stringify(this.state),
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      // Aplicamos una promesa
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        M.toast({ html: "Task Saved" });
-        this.setState({ title: "", description: "" });
-        this.getTasks(); // Para mostrar tareas que agregemos
+    if (this.state._id) {
+      fetch(`/api/task/${this.state._id}`, {
+        method: "PUT",
+        body: JSON.stringify(this.state),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
       })
-      .catch((err) => console.error(err));
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          M.toast({ html: "Task Updated" });
+          this.setState({ title: "", description: "", _id: "" });
+          this.getTasks(); // Para mostrar tareas actualizadas
+        });
+    } else {
+      // Capturamos los datos atravez del estado de la aplicacion
+      // console.log(this.state);
+      // Evento fecth para enviar una peticion http al sevidor
+      fetch("/api/task", {
+        method: "POST",
+        body: JSON.stringify(this.state),
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        // Aplicamos una promesa
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          M.toast({ html: "Task Saved" });
+          this.setState({ title: "", description: "" });
+          this.getTasks(); // Para mostrar tareas que agregemos
+        })
+        .catch((err) => console.error(err));
+    }
     e.preventDefault();
   }
   componentDidMount() {
@@ -49,10 +69,10 @@ class App extends Component {
         // console.log(this.state.tasks);
       });
   }
-  handleDelete(id) {
+  deleteTask(id) {
     if (confirm("Are you suere you want to delete it?")) {
       console.log(`deleting: ${id}`);
-      fetch(`api/task/${id}`, {
+      fetch(`/api/task/${id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -69,6 +89,19 @@ class App extends Component {
     } else {
       M.toast({ html: "Task Not Deleted" });
     }
+  }
+  editTask(id) {
+    fetch(`/api/task/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({
+          title: data.title,
+          description: data.description,
+          // Se llena con el id para luego manejarlo con un condicional
+          _id: data._id,
+        });
+      });
   }
   handleChange(e) {
     // Almacenamos en una variable dos datos que estan en e.target
@@ -149,13 +182,13 @@ class App extends Component {
                         {/* Agregar estilos para mejor los botones */}
                         <td>
                           <button
-                            // onClick={this.handleDelete}
+                            onClick={() => this.editTask(task._id)}
                             className="btn light-blue darken-4"
                           >
                             <i className="material-icons">edit</i>
                           </button>
                           <button
-                            onClick={() => this.handleDelete(task._id)}
+                            onClick={() => this.deleteTask(task._id)}
                             className="btn light-blue darken-4"
                             style={{ margin: "4px" }}
                           >
