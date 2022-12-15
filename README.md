@@ -1,9 +1,18 @@
 # js-mern
 
-### Para que funcione la conexion a mongo crear un .env con la variable MONGODB_URI
+### Mongo, Express, React, Node
 
-### Agregar un cambio al boton send cuando se va a editar
+## _Por agregar_ 
 
-### Protejer rutas
+- Para que funcione la conexion a mongo crear un .env con la variable MONGODB_URI y acceso al cluster no olvidar `$ npm install`
 
-### Mejorar estilos CSS
+- Cambiar el texto del boton send cuando se va a editar (update)
+
+- Protejer rutas
+
+- Mejorar estilos CSS
+
+
+![](https://pandao.github.io/editor.md/examples/images/4.jpg)
+
+> Follow your heart.
